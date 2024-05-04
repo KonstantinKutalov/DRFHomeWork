@@ -41,7 +41,7 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrModerator]
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.request.method == 'POST':  # Проверка метода запроса
             permission_classes = [IsAdminUser]  # Только администраторы могут создавать
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrModerator]  # Модераторы и владельцы могут просматривать
