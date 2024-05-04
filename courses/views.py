@@ -6,11 +6,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from rest_framework import viewsets, generics
-from .models import Course, Lesson
+from .models import Course, Lesson, Subscription
 from .serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from users.permissions import IsOwnerOrModerator
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 # Для курса
@@ -60,3 +64,23 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             permission_classes = [IsAuthenticated,
                                   IsOwnerOrModerator]  # Модераторы и владельцы могут получать и обновлять
         return [permission() for permission in permission_classes]
+
+
+class SubscriptionAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get('course_id')
+
+        if not course_id:
+            return Response({'error': 'course_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        course = get_object_or_404(Course, pk=course_id)
+        subscription, created = Subscription.objects.get_or_create(user=user, course=course)
+
+        if created:
+            message = 'Подписка добавлена'
+        else:
+            subscription.delete()
+            message = 'Подписка удалена'
+
+        return Response({'message': message}, status=status.HTTP_200_OK)
