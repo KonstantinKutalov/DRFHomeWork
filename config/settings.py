@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # ДЗ№3
     'rest_framework_simplejwt',
 
+    # 4
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
