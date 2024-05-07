@@ -143,3 +143,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+
+STRIPE_API_KEY = 'sk_test_51PDLFHL8gcm7lluBa0h5e0Wl0GpCtkB9f5frZjUbTzMImeVnD2qnlIPWcEU6hBIHCuVAUGk9Ue0mHWFvQwU5FE6x00RPemKxTb'
+STRIPE_PUBLIC_KEY = 'pk_test_51PDLFHL8gcm7lluBsuwkDB9kfVKnfQ7azkoAgU9dP6prX9L2IBDMaORCc3WyJ6MMiUlmYYGUPWWP6ZaYKhmLK0MU00okHDMSe0'
