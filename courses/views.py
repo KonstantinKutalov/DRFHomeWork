@@ -16,6 +16,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .paginators import CoursePagination, LessonPagination
+from .tasks import send_course_update_email
+from .models import Subscription
 
 
 # Для курса
@@ -38,6 +40,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        # Отправка email подписчикам ообновлении курса
+        subscribers = Subscription.objects.filter(course=instance).values_list('user__email', flat=True)
+        for subscriber_email in subscribers:
+            send_course_update_email.delay(subscriber_email, instance.title)
 
 
 # Для урока

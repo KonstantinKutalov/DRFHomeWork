@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'courses',
     'rest_framework_simplejwt',
     'drf_yasg',
+
+    'config.celery',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -97,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Novosibirsk'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -119,3 +122,10 @@ REST_FRAMEWORK = {
 
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+
+# Celery settings
+CELERY_BROKER_URL = f"redis://:{os.getenv('REDIS_PASSWORD')}@{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

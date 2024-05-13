@@ -7,7 +7,7 @@ class Course(models.Model):
     preview = models.ImageField(upload_to='course_previews/', blank=True)
     description = models.TextField(blank=True)
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='created_courses')
-    description = models.TextField(blank=True, validators=[validate_link])
+#   description = models.TextField(blank=True, validators=[validate_link])
 
     class Meta:
         verbose_name = 'Курс'
@@ -42,3 +42,4 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('user', 'course')
+
