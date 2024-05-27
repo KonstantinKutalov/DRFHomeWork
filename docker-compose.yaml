@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   redis:
@@ -21,6 +21,10 @@ services:
       interval: 10s
       retries: 5
       timeout: 5s
+    environment:
+      POSTGRES_DB: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   app:
     build: .
@@ -33,8 +37,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-
-
+    env_file:
+      - .env
 
   celery:
     build: .
@@ -59,5 +63,6 @@ services:
       - redis
       - db
       - app
+
 volumes:
   pg_data:
