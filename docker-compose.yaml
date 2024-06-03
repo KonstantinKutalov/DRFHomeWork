@@ -1,13 +1,15 @@
-version: "3.8"
+version: "3.9"
 
 services:
   redis:
+    # Используем официальный образ Redis
     image: redis:latest
     restart: on-failure
     expose:
       - "6379"
 
   db:
+    # Используем официальный образ PostgreSQL
     image: postgres:16-alpine
     restart: on-failure
     env_file:
@@ -26,12 +28,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
-  app:
-    build: .
+  django:
+    # Используем Dockerfile для Django
+    build:
+      context: .
+      dockerfile: Dockerfile.django.dockerfile
     tty: true
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -41,7 +46,10 @@ services:
       - .env
 
   celery:
-    build: .
+    # Используем Dockerfile для Celery
+    build:
+      context: .
+      dockerfile: Dockerfile.celery.dockerfile
     tty: true
     command: celery -A config worker -l info
     restart: on-failure
@@ -50,10 +58,13 @@ services:
     depends_on:
       - redis
       - db
-      - app
+      - django
 
   celery-beat:
-    build: .
+    # Используем Dockerfile для Celery
+    build:
+      context: .
+      dockerfile: Dockerfile.celery.dockerfile
     tty: true
     command: celery -A config beat -l info
     restart: on-failure
@@ -62,7 +73,7 @@ services:
     depends_on:
       - redis
       - db
-      - app
+      - django
 
 volumes:
   pg_data:
